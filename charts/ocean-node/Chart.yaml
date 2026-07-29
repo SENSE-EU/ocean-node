@@ -1,0 +1,11 @@
+apiVersion: v2
+name: ocean-node
+description: Helm chart for deploying Ocean Node
+type: application
+version: 0.1.0
+appVersion: "3.2.0"
+home: https://github.com/oceanprotocol/ocean-node
+sources:
+  - https://github.com/oceanprotocol/ocean-node
+maintainers:
+  - name: Ocean Protocol

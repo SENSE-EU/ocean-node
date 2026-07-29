@@ -1,0 +1,121 @@
+# Default values for ocean-node.
+
+replicaCount: 1
+# NOTE: ocean-node keeps local state (SQLite bucket registry, key/address files,
+# persistent-storage backend files) on disk under /usr/src/app/{databases,c2d_storage,logs}.
+# Running >1 replica against the same PVC is NOT supported without externalizing that state.
+# Keep replicaCount at 1 unless/until that work is done.
+
+nameOverride: ""
+fullnameOverride: ""
+
+image:
+  repository: oceanenterprise/oe-node
+  pullPolicy: IfNotPresent
+  # Defaults to Chart.appVersion when empty
+  tag: ""
+
+imagePullSecrets: []
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+
+podSecurityContext:
+  fsGroup: 1000
+
+securityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+      - ALL
+
+service:
+  type: ClusterIP
+  ports:
+    http: 8000
+    p2pTcp4: 9000
+    p2pWs4: 9001
+    p2pTcp6: 9002
+    p2pWs6: 9003
+    p2pWss4: 9005
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # nginx.ingress.kubernetes.io/ssl-protocols: "TLSv1.3"
+  host: ""
+  path: /
+  pathType: Prefix
+  tls:
+    enabled: false
+    secretName: ""
+
+resources: {}
+  # requests:
+  #   cpu: 250m
+  #   memory: 512Mi
+  # limits:
+  #   cpu: "1"
+  #   memory: 2Gi
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+persistence:
+  enabled: true
+  storageClassName: ""
+  accessModes:
+    - ReadWriteOnce
+  size: 20Gi
+  existingClaim: ""
+
+# Non-secret environment variables, rendered into a ConfigMap.
+# See docs/env.md in the app repo for the full list of supported variables.
+env:
+  NODE_ENV: "production"
+  IPFS_GATEWAY: "https://ipfs.io/"
+  ARWEAVE_GATEWAY: "https://arweave.net/"
+  HTTP_API_PORT: "8000"
+  LOG_LEVEL: ""
+  DASHBOARD: "true"
+  DB_TYPE: "elasticsearch"
+  DB_URL: ""
+  MAX_REQ_PER_MINUTE: "10000"
+  MAX_CONNECTIONS_PER_MINUTE: "10000"
+  RPCS: ""
+  FEE_TOKENS: ""
+  FEE_AMOUNT: ""
+  ALLOWED_ADMINS: ""
+  NODE_OWNER_INFO: ""
+  POLICY_SERVER_URL: ""
+
+# Secret values. Rendered into a Kubernetes Secret unless existingSecret is set.
+# PRIVATE_KEY is mandatory for the node to start.
+secretEnv:
+  PRIVATE_KEY: ""
+  DB_USERNAME: ""
+  DB_PASSWORD: ""
+  JWT_SECRET: ""
+
+# Name of a pre-existing Secret to use instead of the one rendered from secretEnv above.
+# Must contain the same keys (PRIVATE_KEY, DB_USERNAME, DB_PASSWORD, JWT_SECRET).
+existingSecret: ""
+
+# Compute-to-Data (C2D) support requires access to a Docker daemon socket.
+# This is disabled by default: mounting the host's /var/run/docker.sock into a pod
+# grants effective root on the node and does not work on containerd-only clusters
+# (most managed Kubernetes, including standard IONOS/OSC node pools).
+# Do not enable this without an explicit architecture decision (e.g. dedicated
+# DinD deployment, remote Docker host, or a separate C2D runner component).
+compute:
+  enabled: false
+  dockerSocketPath: /var/run/docker.sock

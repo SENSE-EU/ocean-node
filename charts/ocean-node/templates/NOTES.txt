@@ -1,0 +1,33 @@
+Ocean Node has been deployed as "{{ include "ocean-node.fullname" . }}" in namespace "{{ .Release.Namespace }}".
+
+{{- if .Values.ingress.enabled }}
+
+HTTP API is exposed via ingress at:
+  http{{ if .Values.ingress.tls.enabled }}s{{ end }}://{{ .Values.ingress.host }}{{ .Values.ingress.path }}
+{{- else }}
+
+HTTP API is only reachable inside the cluster:
+  kubectl -n {{ .Release.Namespace }} port-forward svc/{{ include "ocean-node.fullname" . }} 8000:{{ .Values.service.ports.http }}
+{{- end }}
+
+{{- if not .Values.persistence.enabled }}
+
+WARNING: persistence.enabled is false. Node identity, the SQLite databases and
+persistent-storage buckets will be lost on every pod restart.
+{{- end }}
+
+{{- if .Values.compute.enabled }}
+
+WARNING: compute.enabled is true — this pod mounts the host Docker socket
+({{ .Values.compute.dockerSocketPath }}) to run Compute-to-Data jobs. This grants the
+pod effective root on the node and requires a Docker (not containerd-only) container
+runtime. Confirm this is acceptable for the target cluster before using in production.
+{{- end }}
+
+{{- if eq (include "ocean-node.secretName" .) (include "ocean-node.fullname" .) }}
+
+NOTE: secrets are currently sourced from Helm values (values.secretEnv) and rendered
+into a Kubernetes Secret by this chart. For production, prefer setting existingSecret
+to a Secret populated by your secrets manager (e.g. OpenBao/Vault) instead of storing
+PRIVATE_KEY and other credentials in a values file.
+{{- end }}
