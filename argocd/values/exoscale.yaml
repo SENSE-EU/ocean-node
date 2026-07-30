@@ -1,0 +1,36 @@
+# Environment overlay for the "exoscale" cluster entry in applicationset.yaml.
+# Merged on top of charts/ocean-node/values.yaml. Secrets are intentionally NOT
+# set here — see README.md in this directory.
+#
+# To add another environment/cluster, copy this file (e.g. values/staging.yaml),
+# adjust it, and add one more entry to the generator list in applicationset.yaml.
+# Nothing in this chart or the ApplicationSet is tied to any specific cloud
+# provider naming — "exoscale" here is just this environment's label.
+
+replicaCount: 1
+
+ingress:
+  enabled: true
+  className: nginx
+  host: ocean-node.example.com # TODO: replace with actual hostname
+  tls:
+    enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    nginx.ingress.kubernetes.io/ssl-protocols: 'TLSv1.3'
+
+persistence:
+  enabled: true
+  size: 10Gi
+  storageClassName: '' # TODO: set to the Exoscale SKS storage class name (e.g. "exoscale-bs")
+
+env:
+  NODE_ENV: production
+  DB_TYPE: elasticsearch
+  DB_URL: '' # TODO: Elasticsearch endpoint reachable from this cluster
+  LOG_LEVEL: info
+
+# PRIVATE_KEY, DB_USERNAME, DB_PASSWORD, JWT_SECRET: provided via existingSecret,
+# not inlined here. Set existingSecret once the Secret has been created/synced
+# by the secrets manager for this namespace.
+existingSecret: ocean-node-secrets
