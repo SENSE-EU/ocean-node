@@ -276,7 +276,7 @@ jobs:
       - name: Checkout Ocean Node
         uses: actions/checkout@v4
         with:
-          repository: 'OceanProtocolEnterprise/ocean-node'
+          repository: ${{ github.repository }}
           path: 'ocean-node'
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
       - name: Build Ocean Node
@@ -301,7 +301,9 @@ jobs:
         run: echo "ESCROW_CLAIM_TIMEOUT=$(date +%s)" >> "$GITHUB_ENV"
 
       - name: docker logs
-        run: docker logs ocean-contracts-1 && docker logs ocean-typesense-1
+        run: |
+          docker logs ocean-contracts-1 || echo "No ocean-contracts-1 container"
+          docker logs ocean-typesense-1 || echo "No ocean-typesense-1 container"
         if: ${{ failure() }}
 
       - name: Set DOCKER_REGISTRY_AUTHS from Docker Hub secrets
