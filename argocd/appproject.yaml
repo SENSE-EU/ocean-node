@@ -7,10 +7,8 @@ metadata:
   name: ocean-node
   namespace: argocd
 spec:
-  description: Ocean Node (FACIS.FAP_PCI) deployments
+  description: Ocean Node deployments
   sourceRepos:
-    # TODO: replace with the final designated FACIS repository once communicated
-    # by the client (see FACIS.FAP_PCI Technical Development Requirements, "Repository rules").
     - https://github.com/SENSE-EU/ocean-node
   destinations:
     # Matches "ocean-node" (single-environment setups) as well as

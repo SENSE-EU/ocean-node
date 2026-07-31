@@ -57,7 +57,6 @@ describe('Should validate configuration from JSON', () => {
   })
   after(() => {
     delete process.env.CONFIG_PATH
-    delete process.env.PRIVATE_KEY
   })
 })
 
@@ -109,7 +108,6 @@ describe('Should validate P2P config from environment variables', () => {
 
   after(() => {
     delete process.env.CONFIG_PATH
-    delete process.env.PRIVATE_KEY
     delete process.env[ENVIRONMENT_VARIABLES.P2P_ipV4BindAddress.name]
     delete process.env[ENVIRONMENT_VARIABLES.P2P_ipV4BindTcpPort.name]
     delete process.env[ENVIRONMENT_VARIABLES.P2P_ipV6BindAddress.name]

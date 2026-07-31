@@ -22,21 +22,25 @@ import winston from 'winston'
 
 let envOverrides: OverrideEnvConfig[]
 
-describe('Logger instances and transports tests', async () => {
-  before(() => {})
-  // need to do it first
-  envOverrides = await setupEnvironment(
-    TEST_ENV_CONFIG_FILE,
-    buildEnvOverrideConfig(
-      [
-        ENVIRONMENT_VARIABLES.NODE_ENV,
-        ENVIRONMENT_VARIABLES.LOG_DB,
-        ENVIRONMENT_VARIABLES.LOG_LEVEL
-      ],
-      ['development', 'false', 'info']
+// NOTE: describe() bodies must stay synchronous — Mocha does not await an async
+// describe callback, so anything after its first `await` gets scheduled on a
+// microtask instead of during suite-tree construction, racing unpredictably with
+// other test files' hooks. Setup lives in before() instead of directly in the body.
+describe('Logger instances and transports tests', () => {
+  before(async () => {
+    envOverrides = await setupEnvironment(
+      TEST_ENV_CONFIG_FILE,
+      buildEnvOverrideConfig(
+        [
+          ENVIRONMENT_VARIABLES.NODE_ENV,
+          ENVIRONMENT_VARIABLES.LOG_DB,
+          ENVIRONMENT_VARIABLES.LOG_LEVEL
+        ],
+        ['development', 'false', 'info']
+      )
     )
-  )
-  // because of this
+  })
+
   it('should be development environment', () => {
     expect(isDevelopmentEnvironment()).to.be.equal(true)
   })

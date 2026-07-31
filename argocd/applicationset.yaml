@@ -37,7 +37,7 @@ spec:
       project: ocean-node
       sources:
         # Source 1: the Helm chart itself.
-        - repoURL: https://github.com/SENSE-EU/ocean-node # TODO: replace with the final designated FACIS repository once communicated.
+        - repoURL: https://github.com/SENSE-EU/ocean-node
           targetRevision: '{{.targetRevision}}'
           path: charts/ocean-node
           helm:
@@ -45,7 +45,7 @@ spec:
               - '$values/argocd/{{.valuesFile}}'
         # Source 2: same repo, checked out whole (no path) purely so the "$values"
         # reference above can resolve a values file living outside the chart dir.
-        - repoURL: https://github.com/SENSE-EU/ocean-node # TODO: keep in sync with source 1.
+        - repoURL: https://github.com/SENSE-EU/ocean-node
           targetRevision: '{{.targetRevision}}'
           ref: values
       destination:

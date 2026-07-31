@@ -80,6 +80,9 @@ persistence:
 
 # Non-secret environment variables, rendered into a ConfigMap.
 # See docs/env.md in the app repo for the full list of supported variables.
+# NOTE: RPCS and IPFS_GATEWAY are set here with safe/public defaults, but a Secret
+# key of the same name (see secretEnv/existingSecret below) takes precedence at
+# runtime — envFrom applies configMapRef then secretRef, so the Secret always wins.
 env:
   NODE_ENV: "production"
   IPFS_GATEWAY: "https://ipfs.io/"
@@ -89,6 +92,9 @@ env:
   DASHBOARD: "true"
   DB_TYPE: "elasticsearch"
   DB_URL: ""
+  ELASTICSEARCH_SNIFF_ON_START: ""
+  ELASTICSEARCH_SNIFF_ON_CONNECTION_FAULT: ""
+  ELASTICSEARCH_SNIFF_INTERVAL: ""
   MAX_REQ_PER_MINUTE: "10000"
   MAX_CONNECTIONS_PER_MINUTE: "10000"
   RPCS: ""
@@ -97,6 +103,41 @@ env:
   ALLOWED_ADMINS: ""
   NODE_OWNER_INFO: ""
   POLICY_SERVER_URL: ""
+  ASSET_PURGATORY_URL: ""
+  LOAD_INITIAL_DDOS: ""
+  ADDRESS_FILE: ""
+  AUTHORIZED_DECRYPTERS: ""
+  OPERATOR_SERVICE_URL: ""
+  INTERFACES: ""
+  ALLOWED_VALIDATORS: ""
+  INDEXER_INTERVAL: ""
+  RATE_DENY_LIST: ""
+  MAX_CHECKSUM_LENGTH: ""
+  DOCKER_COMPUTE_ENVIRONMENTS: ""
+
+  # P2P (see ENV_TO_CONFIG_MAPPING in src/utils/config/constants.ts for the full set)
+  P2P_ENABLE_IPV4: ""
+  P2P_ENABLE_IPV6: ""
+  P2P_ipV4BindAddress: ""
+  P2P_ipV4BindTcpPort: ""
+  P2P_ipV4BindWsPort: ""
+  P2P_ipV6BindAddress: ""
+  P2P_ipV6BindTcpPort: ""
+  P2P_ipV6BindWsPort: ""
+  P2P_ANNOUNCE_ADDRESSES: ""
+  P2P_ANNOUNCE_PRIVATE: ""
+  P2P_pubsubPeerDiscoveryInterval: ""
+  P2P_dhtMaxInboundStreams: ""
+  P2P_dhtMaxOutboundStreams: ""
+  P2P_mDNSInterval: ""
+  P2P_connectionsMaxParallelDials: ""
+  P2P_connectionsDialTimeout: ""
+  P2P_ENABLE_UPNP: ""
+  P2P_ENABLE_AUTONAT: ""
+  P2P_ENABLE_CIRCUIT_RELAY_SERVER: ""
+  P2P_ENABLE_CIRCUIT_RELAY_CLIENT: ""
+  P2P_BOOTSTRAP_NODES: ""
+  P2P_FILTER_ANNOUNCED_ADDRESSES: ""
 
 # Secret values. Rendered into a Kubernetes Secret unless existingSecret is set.
 # PRIVATE_KEY is mandatory for the node to start.

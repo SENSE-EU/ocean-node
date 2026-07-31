@@ -12,7 +12,7 @@ replicaCount: 1
 ingress:
   enabled: true
   className: nginx
-  host: ocean-node.example.com # TODO: replace with actual hostname
+  host: node.demo.pontus-x.eu
   tls:
     enabled: true
   annotations:
@@ -22,15 +22,29 @@ ingress:
 persistence:
   enabled: true
   size: 10Gi
-  storageClassName: '' # TODO: set to the Exoscale SKS storage class name (e.g. "exoscale-bs")
+  storageClassName: 'exoscale-sbs'
 
 env:
   NODE_ENV: production
   DB_TYPE: elasticsearch
-  DB_URL: '' # TODO: Elasticsearch endpoint reachable from this cluster
+  DB_URL: 'http://elasticsearch-master.elastic.svc.cluster.local:9200'
   LOG_LEVEL: info
+  ELASTICSEARCH_SNIFF_ON_START: 'false'
+  ELASTICSEARCH_SNIFF_ON_CONNECTION_FAULT: 'false'
+  ELASTICSEARCH_SNIFF_INTERVAL: 'false'
+  ASSET_PURGATORY_URL: 'https://raw.githubusercontent.com/deltaDAO/Self-Description-Lifecycle-Management/refs/heads/feat/op-purgatory/op-testnet-asset-purgatory.json'
+  FEE_TOKENS: '{"11155420":"0xd35141583f374d401fee1bfddc35910e1d33a588"}'
+  FEE_AMOUNT: '{"amount":0,"unit":"MB"}'
+  ALLOWED_ADMINS: '["0x28080F654eED6CC00e8b16F4841E92CD0c2C0778"]'
+  INDEXER_INTERVAL: '30000'
+  POLICY_SERVER_URL: 'https://policy.delta-dao.com'
+  NODE_OWNER_INFO: '{"imprint":{"legalName":"deltaDAO AG","email":"contact@delta-dao.com","url":"https://www.delta-dao.com/imprint","address":"Katharinenstraße 30a (Contor) 20457 Hamburg Germany"},"termsAndConditions":{"url":"https://sense.pontus-x.eu/privacy/terms#terms-and-conditions"},"privacyPolicy":{"url":"https://sense.pontus-x.eu/privacy/privacy-policy#privacy-policy"}}'
+  # compute.enabled is still false (see below) — this value is inert until someone
+  # confirms Exoscale SKS nodes actually run Docker (not containerd-only) and flips it.
+  DOCKER_COMPUTE_ENVIRONMENTS: '[{"socketPath": "/var/run/docker.sock","paymentClaimInterval": 120,"environments": [{"id": "deltaDAO","storageExpiry": 604800,"maxJobDuration": 3600,"minJobDuration": 60,"resources": [{ "id": "cpu", "min": 1, "max": 2, "total": 2 },{ "id": "ram", "min": 0, "max": 6, "total": 6 },{ "id": "disk", "min": 0, "max": 20, "total": 20 }],"fees": {"11155420": [{"feeToken": "0xD35141583f374d401fee1BFdDc35910E1D33a588","prices": [{ "id": "cpu", "price": 0.001 },{ "id": "ram", "price": 0.001 },{ "id": "disk", "price": 0.001 }]}]},"free": {"maxJobDuration": 1800,"maxJobs": 3,"resources": [{ "id": "cpu", "max": 1 },{ "id": "ram", "min": 0, "max": 4 },{ "id": "disk", "max": 10 }]}}]}]'
 
-# PRIVATE_KEY, DB_USERNAME, DB_PASSWORD, JWT_SECRET: provided via existingSecret,
-# not inlined here. Set existingSecret once the Secret has been created/synced
-# by the secrets manager for this namespace.
+# PRIVATE_KEY, DB_USERNAME, DB_PASSWORD, JWT_SECRET, RPCS, IPFS_GATEWAY: provided via
+# existingSecret (see external-secret.yaml), not inlined here. RPCS and IPFS_GATEWAY
+# override the chart's ConfigMap defaults of the same name — a Secret key always wins
+# over a ConfigMap key of the same name via envFrom precedence.
 existingSecret: ocean-node-secrets
