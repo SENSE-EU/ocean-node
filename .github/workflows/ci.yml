@@ -298,7 +298,7 @@ jobs:
           jq 'del(.development.EnterpriseEscrow)' "${HOME}/.ocean/ocean-contracts/artifacts/address.json" > "${SYSTEM_TEST_ADDRESS_FILE}"
           echo "ADDRESS_FILE=${SYSTEM_TEST_ADDRESS_FILE}" >> "$GITHUB_ENV"
       - name: Configure escrow timeout for system tests
-        run: echo "ESCROW_CLAIM_TIMEOUT=$(date +%s)" >> "$GITHUB_ENV"
+        run: echo "ESCROW_CLAIM_TIMEOUT=3600" >> "$GITHUB_ENV"
 
       - name: docker logs
         run: |
