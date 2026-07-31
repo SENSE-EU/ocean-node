@@ -301,7 +301,7 @@ jobs:
         run: echo "ESCROW_CLAIM_TIMEOUT=$(date +%s)" >> "$GITHUB_ENV"
 
       - name: docker logs
-        run: docker logs ocean-contracts-1 && docker logs ocean-typesense-1
+        run: docker logs ocean-ocean-contracts-1 && docker logs ocean-typesense-1
         if: ${{ failure() }}
 
       - name: Set DOCKER_REGISTRY_AUTHS from Docker Hub secrets
@@ -372,7 +372,7 @@ jobs:
             echo "No ocean-node.log file found"
           fi
           echo "=== Docker Logs ==="
-          docker logs ocean-contracts-1 || echo "No ocean-contracts-1 container"
+          docker logs ocean-ocean-contracts-1 || echo "No ocean-ocean-contracts-1 container"
           docker logs ocean-typesense-1 || echo "No ocean-typesense-1 container"
           echo "=== System Processes ==="
           ps aux | grep -E "(node|ocean)" || echo "No node/ocean processes found"
