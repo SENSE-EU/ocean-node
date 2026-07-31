@@ -81,9 +81,6 @@ production.
 
 ## Repository note
 
-`sourceRepos` in `appproject.yaml` and `repoURL` in `applicationset.yaml`
-currently point at this project's repo
-(`https://github.com/SENSE-EU/ocean-node`). Per the FACIS.FAP_PCI Technical
-Development Requirements ("Repository rules"), the final designated FACIS
-repository will be communicated after tender award — update both files if/when
-that repository changes.
+`sourceRepos` in `appproject.yaml` and `repoURL` in `applicationset.yaml` point
+at this project's repo (`https://github.com/SENSE-EU/ocean-node`) — chart,
+ArgoCD manifests, and app source all live together (mono-repo GitOps).
