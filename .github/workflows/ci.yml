@@ -139,7 +139,7 @@ jobs:
           repository: 'oceanprotocol/barge'
           path: 'barge'
       - name: Login to Docker Hub
-        if: ${{ env.DOCKERHUB_PASSWORDNONO && env.DOCKERHUB_USERNAMENONO }}
+        if: ${{ env.DOCKERHUB_PASSWORD && env.DOCKERHUB_USERNAME }}
         run: |
           echo "Login to Docker Hub";echo "$DOCKERHUB_PASSWORD" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
         env:
@@ -163,7 +163,7 @@ jobs:
             [ -f "$HOME/.ocean/ocean-contracts/artifacts/ready" ] && break
             done
       - name: docker logs
-        run: docker logs ocean-ocean-contracts-1 && docker logs ocean-typesense-1
+        run: docker logs ocean-ocean-contracts-1 || echo "No ocean-ocean-contracts-1 container"; docker logs ocean-typesense-1 || echo "No ocean-typesense-1 container"
         if: ${{ failure() }}
       - name: Set DOCKER_REGISTRY_AUTHS from Docker Hub secrets
         if: env.DOCKERHUB_USERNAME && env.DOCKERHUB_PASSWORD
@@ -197,7 +197,7 @@ jobs:
           ACCOUNT_PURGATORY_URL: 'https://raw.githubusercontent.com/oceanprotocol/list-purgatory/main/list-accounts.json'
           DOCKER_REGISTRY_AUTHS: ${{ env.DOCKER_REGISTRY_AUTHS }}
       - name: docker logs
-        run: docker logs ocean-ocean-contracts-1 && docker logs ocean-typesense-1
+        run: docker logs ocean-ocean-contracts-1 || echo "No ocean-ocean-contracts-1 container"; docker logs ocean-typesense-1 || echo "No ocean-typesense-1 container"
         if: ${{ failure() }}
       - uses: actions/upload-artifact@v4
         with:
