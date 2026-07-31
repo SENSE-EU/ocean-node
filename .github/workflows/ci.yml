@@ -276,7 +276,7 @@ jobs:
       - name: Checkout Ocean Node
         uses: actions/checkout@v4
         with:
-          repository: ${{ github.repository }}
+          repository: 'OceanProtocolEnterprise/ocean-node'
           path: 'ocean-node'
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
       - name: Build Ocean Node
@@ -298,12 +298,10 @@ jobs:
           jq 'del(.development.EnterpriseEscrow)' "${HOME}/.ocean/ocean-contracts/artifacts/address.json" > "${SYSTEM_TEST_ADDRESS_FILE}"
           echo "ADDRESS_FILE=${SYSTEM_TEST_ADDRESS_FILE}" >> "$GITHUB_ENV"
       - name: Configure escrow timeout for system tests
-        run: echo "ESCROW_CLAIM_TIMEOUT=3600" >> "$GITHUB_ENV"
+        run: echo "ESCROW_CLAIM_TIMEOUT=$(date +%s)" >> "$GITHUB_ENV"
 
       - name: docker logs
-        run: |
-          docker logs ocean-contracts-1 || echo "No ocean-contracts-1 container"
-          docker logs ocean-typesense-1 || echo "No ocean-typesense-1 container"
+        run: docker logs ocean-contracts-1 && docker logs ocean-typesense-1
         if: ${{ failure() }}
 
       - name: Set DOCKER_REGISTRY_AUTHS from Docker Hub secrets
@@ -324,7 +322,7 @@ jobs:
         run: |
           npm run start > ocean-node.log 2>&1 &
         env:
-          PRIVATE_KEY: ${{ secrets.NODE1_PRIVATE_KEY }}
+          PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
           IPFS_GATEWAY: http://172.15.0.16:8080/
           ARWEAVE_GATEWAY: https://arweave.net/
           P2P_ipV4BindTcpPort: 8000
