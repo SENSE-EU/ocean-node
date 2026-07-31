@@ -69,9 +69,9 @@ export const mochaHooks = {
     this.timeout(DEFAULT_TEST_TIMEOUT)
   },
 
-  afterAll() {
+  async afterAll() {
     // restore stuff
-    tearDownEnvironment(envOverrides)
+    await tearDownEnvironment(envOverrides)
     // double check any other possible changes,
     // get the final configuration and compare both
     // restore any value that could have been modified
@@ -83,7 +83,11 @@ export const mochaHooks = {
         CONFIG_LOGGER.debug(
           `(Hook) Restoring environment variable: ${varName} \ncurrent:\n ${process.env[varName]} \noriginal:\n ${initialVariable.originalValue}`
         )
-        process.env[varName] = initialVariable.originalValue
+        if (initialVariable.originalValue !== undefined) {
+          process.env[varName] = initialVariable.originalValue
+        } else {
+          delete process.env[varName]
+        }
       }
     })
   }
